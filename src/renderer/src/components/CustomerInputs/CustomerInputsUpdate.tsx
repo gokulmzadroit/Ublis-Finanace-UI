@@ -46,8 +46,14 @@ const CustomerInputsUpdate = ({ custId, id, closeSidebarUpdate, closeSidebarNew 
     updateprofileImg: '',
     updatepanImg: '',
     updatedaadharImg: '',
-    refUserId: ''
+    refUserId: '',
+    refRName: '',
+    refRPhoneNumber: '',
+    refRAddress: '',
+    refAadharNumber: '',
+    refPanNumber: ''
   })
+  
 
   const submitUpdate = async () => {
     setSaveloading(true)
@@ -107,7 +113,7 @@ const CustomerInputsUpdate = ({ custId, id, closeSidebarUpdate, closeSidebarNew 
                   refPerDistrict: inputs.district,
                   refPerState: inputs.state,
                   refPerPincode: inputs.pincode
-                }
+                },
               }
             },
             {
@@ -186,8 +192,8 @@ const CustomerInputsUpdate = ({ custId, id, closeSidebarUpdate, closeSidebarNew 
             references: [
               ...references,
               {
-                // Send data as an array
-                refUserId: inputs.refUserId, // Include refUserId
+             
+                refUserId: inputs.refUserId, 
                 refRName: inputs.refRName,
                 refRPhoneNumber: inputs.refRPhoneNumber,
                 refRAddress: inputs.refRAddress,
@@ -330,6 +336,83 @@ const CustomerInputsUpdate = ({ custId, id, closeSidebarUpdate, closeSidebarNew 
           [field]: { name: file.name, data: file } // Store both name and base64 data
         }))
       }
+    }
+  }
+
+
+  const Viewreference = async () => {
+    setSubmitLoading(true)
+    console.log('setSubmitLoading----------------------', setSubmitLoading)
+
+    // Add an empty reference object to the state
+    setReferences((prevReferences) => [
+      ...prevReferences,
+      {
+        refUserId: inputs.refUserId, // Include refUserId
+        refRName: '',
+        refRPhoneNumber: '',
+        refRAddress: '',
+        refAadharNumber: '',
+        refPanNumber: ''
+      }
+    ])
+
+    console.log('setReferences', references)
+
+    try {
+      axios
+        .post(
+          import.meta.env.VITE_API_URL + '/adminRoutes/getReference',
+          {
+            references: [
+              ...references,
+              {
+             
+                userId: inputs.userId, 
+              
+              }
+            ]
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+        .then((response: any) => {
+          const data = decrypt(
+            response.data[1],
+            response.data[0],
+            import.meta.env.VITE_ENCRYPTION_KEY
+          )
+
+          setSubmitLoading(false)
+          console.log('setSubmitLoading', setSubmitLoading)
+
+          if (data.success) {
+           
+           
+            toast.success('Successfully Added', {
+              position: 'top-right',
+              autoClose: 2999,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'light',
+              transition: Slide
+            })
+
+            closeSidebarNew()
+          }
+        })
+            
+            
+    } catch (e: any) {
+      console.error('Error adding reference:', e)
+      setSubmitLoading(false)
     }
   }
 

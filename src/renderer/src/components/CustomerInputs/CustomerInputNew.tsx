@@ -42,7 +42,6 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
     pincode: null,
     profileImg: '',
     password: '12345678',
-    refUserId: '',
     refRName: '',
     refRPhoneNumber: '',
     refRAddress: '',
@@ -69,60 +68,60 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
     }))
 
     if (name === 'state') {
-      const districts: any = City.getCitiesOfState('IN', value) // Use 'value' instead of 'inputs.state'
+      const districts: any = City.getCitiesOfState('IN', value)
       setDistricts(districts)
     }
   }
 
-  const Addnewreference = async (userId) => {
-    setSubmitLoading(true)
+  // const Addnewreference = async (userId) => {
+  //   setSubmitLoading(true)
 
-    try {
-    //   const newReference = {
-    //     refUserId: inputs.refUserId,
-    //     refRName: inputs.refRName,
-    //     refRPhoneNumber: inputs.refRPhoneNumber,
-    //     refRAddress: inputs.refRAddress,
-    //     refAadharNumber: inputs.refAadharNumber,
-    //     refPanNumber: inputs.refPanNumber
-    //   }
+  //   try {
+  //     const newReference = {
+  //       refUserId: inputs.refUserId,
+  //       refRName: inputs.refRName,
+  //       refRPhoneNumber: inputs.refRPhoneNumber,
+  //       refRAddress: inputs.refRAddress,
+  //       refAadharNumber: inputs.refAadharNumber,
+  //       refPanNumber: inputs.refPanNumber
+  //     }
 
-    //   setReferences((prevReferences) => [...prevReferences, newReference])
+  //     const updatedReferences = [...references, newReference]
 
-      console.log('setReferences------------', references)
+  //     setReferences(updatedReferences)
+  //     console.log('updatedReferencee line 93', updatedReferences)
 
-      const response = await axios.post(
-        import.meta.env.VITE_API_URL + '/adminRoutes/addReference',
-        { references:references },
-        {
-          headers: {
-            Authorization: localStorage.getItem('token'),
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+  //     const response = await axios.post(
+  //       import.meta.env.VITE_API_URL + '/adminRoutes/addReference',
+  //       { references: updatedReferences },
+  //       {
+  //         headers: {
+  //           Authorization: localStorage.getItem('token'),
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     )
 
-      const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY)
+  //     const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY)
+  //     console.log('data line 107 -----------> 107', data)
 
-      setSubmitLoading(false)
+  //     setSubmitLoading(false)
 
-      if (data.success) {
-        console.log('data----------------', data)
-
-        if (data.refUserId) {
-          setInputs((prevInputs) => ({
-            ...prevInputs,
-            refUserId: data.refUserId
-          }))
-        }
-
-        closeSidebarNew()
-      }
-    } catch (e: any) {
-      console.error('Error adding reference:', e)
-      setSubmitLoading(false)
-    }
-  }
+  //     if (data.success) {
+  //       if (data.refUserId) {
+  //         setInputs((prevInputs) => ({
+  //           ...prevInputs,
+  //           refUserId: data.refUserId
+  //         }))
+  //       }
+  //       console.log('data------------>', data)
+  //       closeSidebarNew()
+  //     }
+  //   } catch (e) {
+  //     console.error('Error adding reference:', e)
+  //     setSubmitLoading(false)
+  //   }
+  // }
 
   const handleFile = (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const file = event.target.files?.[0]
@@ -133,7 +132,7 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
       reader.onload = () => {
         setInputs((prevInputs: any) => ({
           ...prevInputs,
-          [field]: { name: file.name, data: file } // Store both name and base64 data
+          [field]: { name: file.name, data: file }
         }))
       }
     }
@@ -141,6 +140,7 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
 
   const handleNewUser = async () => {
     const formData = new FormData()
+
     formData.append('profile', inputs.profileImg?.data || '')
     formData.append('pan', inputs.panImg?.data || '')
     formData.append('aadhar', inputs.aadharImg?.data || '')
@@ -157,7 +157,15 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
         }
       )
 
+      const handleNewUser = () => {
+        const formData = {
+          ...inputs,
+        }
+        console.log(formData)
+      }
+
       const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY)
+      console.log('data profile api - 170 ', data)
       console.log(data)
 
       if (data.success) {
@@ -191,7 +199,9 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
               },
               DomainInfo: {
                 refUserPassword: inputs.password
-              }
+              },
+              reference: references,
+
             },
             {
               headers: {
@@ -201,15 +211,20 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
             }
           )
           .then((response: any) => {
+        
+            
             const data = decrypt(
+             
+           
               response.data[1],
               response.data[0],
               import.meta.env.VITE_ENCRYPTION_KEY
             )
+            console.log('data----------------------', data)
 
             if (data.success) {
-              Addnewreference(data.userId)
-
+           
+           
               toast.success('Successfully Added', {
                 position: 'top-right',
                 autoClose: 2999,
