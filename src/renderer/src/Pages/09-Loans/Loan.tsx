@@ -10,9 +10,6 @@ import { ToastContainer } from 'react-toastify'
 import { IconField } from 'primereact/iconfield'
 import { InputIcon } from 'primereact/inputicon'
 import { FilterMatchMode } from 'primereact/api'
-import CustomerInputsUpdate from '@renderer/components/CustomerInputs/CustomerInputsUpdate'
-import { Button } from 'primereact/button'
-import CustomerInputNew from '@renderer/components/CustomerInputs/CustomerInputNew'
 import Addnewloan from '@renderer/components/Addnewloan/Addnewloan'
 
 const Loan = () => {
@@ -25,11 +22,8 @@ const Loan = () => {
   const loadData = () => {
     try {
       axios
-        .post(
-          import.meta.env.VITE_API_URL + '/adminRoutes/getPersonList',
-          {
-            roleId: 3
-          },
+        .get(
+          import.meta.env.VITE_API_URL + '/adminRoutes/getLoanAndUser',
           {
             headers: {
               Authorization: localStorage.getItem('token'),
@@ -49,8 +43,7 @@ const Loan = () => {
           if (data.success) {
             setLoadingStatus(false)
             setUsername(data.name[0].refUserFname + ' ' + data.name[0].refUserLname)
-            setUserLists(data.data)
-            console.log(data.data)
+            setUserLists(data.getLoanAndUser)
           }
         })
     } catch (e: any) {
@@ -71,39 +64,6 @@ const Loan = () => {
     )
   }
 
-  const StatusBody = (rowData: any) => {
-    return (
-      <>
-        {rowData.refActiveStatus === 'active' ? (
-          <div
-            style={{
-              padding: '5px',
-              backgroundColor: '#00b600',
-              color: '#fff',
-              borderRadius: '10px',
-              fontSize: '0.8rem',
-              textAlign: 'center'
-            }}
-          >
-            Active
-          </div>
-        ) : (
-          <div
-            style={{
-              padding: '5px',
-              backgroundColor: '#f95f5f',
-              color: '#fff',
-              borderRadius: '10px',
-              fontSize: '0.8rem',
-              textAlign: 'center'
-            }}
-          >
-            Inactive
-          </div>
-        )}
-      </>
-    )
-  }
 
   const CustomerId = (rowData: any) => {
     return (
@@ -111,10 +71,9 @@ const Loan = () => {
         <div
           onClick={() => {
             setUpdateData(true)
-            setUserDetailsLoadData(rowData)
             setUpdateUserId({ id: rowData.refUserId, custId: rowData.refCustId })
           }}
-          style={{ color: '#f95005', textDecoration: 'underline', cursor: 'pointer' }}
+          style={{ color: '#f6931f', textDecoration: 'underline', cursor: 'pointer' }}
         >
           {rowData.refCustId}
         </div>
@@ -122,10 +81,8 @@ const Loan = () => {
     )
   }
 
-  const [newData, setNewData] = useState(false)
 
   const [updateData, setUpdateData] = useState(false)
-  const [userDetailsLoanData, setUserDetailsLoadData] = useState('')
   const [updateUserId, setUpdateUserId] = useState({
     id: '',
     custId: ''
@@ -136,10 +93,6 @@ const Loan = () => {
     loadData()
   }
 
-  const closeSidebarNew = () => {
-    setNewData(false)
-    loadData()
-  }
 
   //   Filter Data - Start
 
@@ -171,7 +124,7 @@ const Loan = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            color: '#f95005',
+            color: '#f6931f',
             height: '92vh',
             width: '100%'
           }}
@@ -231,15 +184,9 @@ const Loan = () => {
                 field="refUserMobileNo"
                 header="Phone Number"
               ></Column>
-              <Column style={{ minWidth: '10rem' }} field="refUserEmail" header="Email"></Column>
               <Column style={{ minWidth: '10rem' }} body={AddressBody} header="Address"></Column>
-              <Column
-                style={{ minWidth: '8rem' }}
-                field="refAadharNo"
-                header="Aadhar Number"
-              ></Column>
-              <Column style={{ minWidth: '8rem' }} field="refPanNo" header="Pan Number"></Column>
-              <Column body={StatusBody} header="Status"></Column>
+              <Column style={{ minWidth: '8rem' }} field="opened_count" header="Opened Loan"></Column>
+              <Column style={{ minWidth: '8rem' }} field="closed_count" header="Closed Loan"></Column>
             </DataTable>
           </div>
 
@@ -256,7 +203,6 @@ const Loan = () => {
             <Addnewloan
               custId={updateUserId.custId}
               id={updateUserId.id}
-              userDetailsLoanData={userDetailsLoanData}
               closeSidebarUpdate={closeSidebarUpdate}
             />
           </Sidebar>

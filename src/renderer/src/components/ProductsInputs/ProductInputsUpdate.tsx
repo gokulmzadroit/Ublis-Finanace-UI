@@ -75,7 +75,7 @@ const ProductInputsUpdate = ({ data, closeSidebarUpdate }) => {
         <>
             <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1.5px solid grey", paddingBottom: "10px" }}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>
-                    <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#f95005" }}>
+                    <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#f6931f" }}>
                         Product Data
                     </div>
                     <div>
@@ -84,17 +84,17 @@ const ProductInputsUpdate = ({ data, closeSidebarUpdate }) => {
                                 <>
                                     {
                                         saveloading ? (
-                                            <div style={{ backgroundColor: "#f95005", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }}>
+                                            <div style={{ backgroundColor: "#f6931f", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }}>
                                                 <i className="pi pi-spin pi-spinner" style={{ fontSize: "1rem" }}></i>
                                             </div>
                                         ) : (
-                                            <div style={{ backgroundColor: "#f95005", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={submitUpdate}>Save</div>
+                                            <div style={{ backgroundColor: "#f6931f", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={submitUpdate}>Save</div>
                                         )
                                     }
                                 </>
                             ) : (
                                 <>
-                                    <div style={{ backgroundColor: "#f95005", width: "4rem ", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={() => { setEdit(false) }}>Edit</div>
+                                    <div style={{ backgroundColor: "#f6931f", width: "4rem ", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={() => { setEdit(false) }}>Edit</div>
                                 </>
                             )
                         }

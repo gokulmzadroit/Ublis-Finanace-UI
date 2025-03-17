@@ -79,7 +79,7 @@ const BankDetails = () => {
                 refBankAddress: rowData.refBankAddress,
                 refBalance: rowData.refBalance
             })
-        }} style={{ color: "#f95005", textDecoration: "underline", cursor: "pointer" }}>{rowData.refBankName}</div></>)
+        }} style={{ color: "#f6931f", textDecoration: "underline", cursor: "pointer" }}>{rowData.refBankName}</div></>)
     }
 
 
@@ -131,7 +131,7 @@ const BankDetails = () => {
             <Header userName={username} pageName={"Bank Details"} />
             {
                 loadingStatus ? (
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f95005", height: "92vh", width: "100%" }}>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f6931f", height: "92vh", width: "100%" }}>
                         <i className="pi pi-spin pi-spinner" style={{ fontSize: "5rem" }}></i>
                     </div>
                 ) : (
@@ -140,7 +140,7 @@ const BankDetails = () => {
 
                         {/* New User Button - Start */}
 
-                        <Button label="Add Bank Details" onClick={() => { setNewData(true) }} />
+                        <Button label="Add Bank Details" severity="warning" style={{ backgroundColor: "#f6931f" }} onClick={() => { setNewData(true) }} />
 
                         {/* New User Button - End */}
 

@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import { Button } from 'primereact/button'
 import AddnewFund from '@renderer/components/FundsInputs/AddnewFund'
 import { Calendar } from 'primereact/calendar'
+import { log } from 'node:console'
 
 const Funds = () => {
   const [userLists, setUserLists] = useState([])
@@ -21,6 +22,7 @@ const Funds = () => {
   const [isFiltered, setIsFiltered] = useState(false)
 
   const loadData = () => {
+    console.log("line --------- 25")
     try {
       axios
         .get(import.meta.env.VITE_API_URL + '/adminRoutes/getBankFundList', {
@@ -133,7 +135,7 @@ const Funds = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            color: '#f95005',
+            color: '#f6931f',
             height: '92vh',
             width: '100%'
           }}
@@ -152,8 +154,9 @@ const Funds = () => {
           >
             <div style={{ display: 'flex', justifyContent: 'start' }}>
               <Button
+                severity='warning'
                 label="Add Funds"
-                style={{ padding: '10px 20px', fontSize: '1rem' }}
+                style={{ padding: '10px 20px', fontSize: '1rem', backgroundColor: "#f6931f" }}
                 onClick={() => setNewData(true)}
               />
             </div>
@@ -225,7 +228,7 @@ const Funds = () => {
             >
               <Column field="refbfTransactionDate" header="Transaction Date"></Column>
               <Column body={TransactionAmount} header="Transaction Amount"></Column>
-              <Column field="refBankId" header="Bank Name"></Column>
+              <Column field="refBankName" header="Bank Name"></Column>
               <Column field="refFundType" header="Fund Type"></Column>
               <Column body={Status} field="refbfTrasactionType" header="Action"></Column>
             </DataTable>

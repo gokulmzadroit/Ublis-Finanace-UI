@@ -81,7 +81,7 @@ const Products = () => {
                 refProductDescription: rowData.refProductDescription,
                 refProductStatus: rowData.refProductStatus
             })
-        }} style={{ color: "#f95005", textDecoration: "underline", cursor: "pointer" }}>{rowData.refProductName}</div></>)
+        }} style={{ color: "#f6931f", textDecoration: "underline", cursor: "pointer" }}>{rowData.refProductName}</div></>)
     }
 
 
@@ -153,7 +153,7 @@ const Products = () => {
             <Header userName={username} pageName={"Products"} />
             {
                 loadingStatus ? (
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f95005", height: "92vh", width: "100%" }}>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f6931f", height: "92vh", width: "100%" }}>
                         <i className="pi pi-spin pi-spinner" style={{ fontSize: "5rem" }}></i>
                     </div>
                 ) : (
@@ -162,7 +162,7 @@ const Products = () => {
 
                         {/* New User Button - Start */}
 
-                        <Button label="Add Products" onClick={() => { setNewData(true) }} />
+                        <Button label="Add Products" severity="warning" style={{ backgroundColor: "#f6931f" }} onClick={() => { setNewData(true) }} />
 
                         {/* New User Button - End */}
 

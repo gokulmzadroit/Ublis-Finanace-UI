@@ -8,7 +8,7 @@ const Header = ({ userName, pageName }) => {
                 <div style={{ fontSize: "1rem", paddingBottom: "1px", fontWeight: "700" }}>
                     {userName}
                 </div>
-                <div style={{ fontSize: "0.6rem", fontWeight: "700", color: "#f95005" }}>
+                <div style={{ fontSize: "0.6rem", fontWeight: "700", color: "#f6931f" }}>
                     {
                         localStorage.getItem("roleId") === "1" ? "Admin" : "Agent"
                     }

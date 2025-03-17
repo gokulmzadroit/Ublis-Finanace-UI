@@ -73,55 +73,19 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
     }
   }
 
-  // const Addnewreference = async (userId) => {
-  //   setSubmitLoading(true)
+  const Addnewreference = async () => {
+    setReferences((prevReferences) => [
+      ...prevReferences,
+      {
+        refRName: '',
+        refRPhoneNumber: '',
+        refRAddress: '',
+        refAadharNumber: '',
+        refPanNumber: ''
+      }
+    ])
 
-  //   try {
-  //     const newReference = {
-  //       refUserId: inputs.refUserId,
-  //       refRName: inputs.refRName,
-  //       refRPhoneNumber: inputs.refRPhoneNumber,
-  //       refRAddress: inputs.refRAddress,
-  //       refAadharNumber: inputs.refAadharNumber,
-  //       refPanNumber: inputs.refPanNumber
-  //     }
-
-  //     const updatedReferences = [...references, newReference]
-
-  //     setReferences(updatedReferences)
-  //     console.log('updatedReferencee line 93', updatedReferences)
-
-  //     const response = await axios.post(
-  //       import.meta.env.VITE_API_URL + '/adminRoutes/addReference',
-  //       { references: updatedReferences },
-  //       {
-  //         headers: {
-  //           Authorization: localStorage.getItem('token'),
-  //           'Content-Type': 'application/json'
-  //         }
-  //       }
-  //     )
-
-  //     const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY)
-  //     console.log('data line 107 -----------> 107', data)
-
-  //     setSubmitLoading(false)
-
-  //     if (data.success) {
-  //       if (data.refUserId) {
-  //         setInputs((prevInputs) => ({
-  //           ...prevInputs,
-  //           refUserId: data.refUserId
-  //         }))
-  //       }
-  //       console.log('data------------>', data)
-  //       closeSidebarNew()
-  //     }
-  //   } catch (e) {
-  //     console.error('Error adding reference:', e)
-  //     setSubmitLoading(false)
-  //   }
-  // }
+  }
 
   const handleFile = (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const file = event.target.files?.[0]
@@ -139,11 +103,12 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
   }
 
   const handleNewUser = async () => {
-    const formData = new FormData()
+    const formData = new FormData();
+    setSubmitLoading(true);
 
-    formData.append('profile', inputs.profileImg?.data || '')
-    formData.append('pan', inputs.panImg?.data || '')
-    formData.append('aadhar', inputs.aadharImg?.data || '')
+    formData.append('profile', inputs.profileImg?.data || "")
+    formData.append('pan', inputs.panImg?.data || "")
+    formData.append('aadhar', inputs.aadharImg?.data || "")
 
     try {
       const response = await axios.post(
@@ -156,20 +121,10 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
           }
         }
       )
-
-      const handleNewUser = () => {
-        const formData = {
-          ...inputs,
-        }
-        console.log(formData)
-      }
-
       const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY)
       console.log('data profile api - 170 ', data)
-      console.log(data)
 
       if (data.success) {
-        console.log(data.filePaths.images.aadhar)
 
         axios
           .post(
@@ -184,9 +139,9 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
                   refAadharNo: inputs.aadharno,
                   refPanNo: inputs.panno,
                   activeStatus: inputs.status,
-                  ProfileImgPath: data.filePaths.images.profile,
-                  refPanPath: data.filePaths.images.pan,
-                  refAadharPath: data.filePaths.images.aadhar
+                  ProfileImgPath: data.filePaths.images.profile ? data.filePaths.images.profile : "",
+                  refPanPath: data.filePaths.images.pan ? data.filePaths.images.pan : "",
+                  refAadharPath: data.filePaths.images.aadhar ? data.filePaths.images.aadhar : ""
                 },
                 Communtication: {
                   refPerMob: inputs.mobileno,
@@ -201,7 +156,6 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
                 refUserPassword: inputs.password
               },
               reference: references,
-
             },
             {
               headers: {
@@ -211,11 +165,11 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
             }
           )
           .then((response: any) => {
-        
-            
+
+
             const data = decrypt(
-             
-           
+
+
               response.data[1],
               response.data[0],
               import.meta.env.VITE_ENCRYPTION_KEY
@@ -223,8 +177,10 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
             console.log('data----------------------', data)
 
             if (data.success) {
-           
-           
+
+              setSubmitLoading(false);
+
+
               toast.success('Successfully Added', {
                 position: 'top-right',
                 autoClose: 2999,
@@ -497,7 +453,7 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
           </div>
 
           <div style={{ marginTop: '35px' }}>
-            <Button label="Add New Reference" raised />
+            <Button type='button' label="Add New Reference" onClick={Addnewreference} raised />
 
             {references.map((reference, index) => (
               <div
@@ -577,16 +533,34 @@ const CustomerInputNew = ({ closeSidebarNew }) => {
               </div>
             ))}
 
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: '35px'
-              }}
-            >
-              <Button style={{ width: '20%' }} type="submit" severity="success" label="Submit" />
-            </div>
+
+            {
+              submitLoading ? (
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '35px'
+                  }}
+                >
+                  <Button style={{ width: '20%' }} type="submit" severity="success" icon="pi pi-check pi-spinner" />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '35px'
+                  }}
+                >
+                  <Button style={{ width: '20%' }} type="submit" severity="success" label="Submit" />
+                </div>
+              )
+            }
+
+
           </div>
         </div>
       </form>

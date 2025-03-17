@@ -92,7 +92,7 @@ const Customers = () => {
         return (<><div onClick={() => {
             setUpdateData(true);
             setUpdateUserId({ id: rowData.refUserId, custId: rowData.refCustId })
-        }} style={{ color: "#f95005", textDecoration: "underline", cursor: "pointer" }}>{rowData.refCustId}</div></>)
+        }} style={{ color: "#f6931f", textDecoration: "underline", cursor: "pointer" }}>{rowData.refCustId}</div></>)
     }
 
     const [newData, setNewData] = useState(false);
@@ -142,8 +142,8 @@ const Customers = () => {
             <ToastContainer />
             <Header userName={username} pageName={"Agents"} />
             {
-                loadingStatus ? (
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f95005", height: "92vh", width: "100%" }}>
+                loadingStatus ? (   
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f6931f", height: "92vh", width: "100%" }}>
                         <i className="pi pi-spin pi-spinner" style={{ fontSize: "5rem" }}></i>
                     </div>
                 ) : (
@@ -152,7 +152,7 @@ const Customers = () => {
 
                         {/* New User Button - Start */}
 
-                        <Button label="New Agents" onClick={() => { setNewData(true) }} />
+                        <Button label="New Agents" severity="warning" style={{ backgroundColor: "#f6931f" }} onClick={() => { setNewData(true) }} />
 
                         {/* New User Button - End */}
 

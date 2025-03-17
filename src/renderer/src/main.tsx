@@ -12,8 +12,9 @@ import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+
     <PrimeReactProvider>
       <App />
-    </PrimeReactProvider>  </React.StrictMode>
+    </PrimeReactProvider>
+    
 )

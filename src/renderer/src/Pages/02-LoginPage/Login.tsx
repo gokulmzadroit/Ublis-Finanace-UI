@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../assets/Logo.png";
 
 export default function Login() {
 
@@ -88,7 +89,9 @@ export default function Login() {
     return (
         <div className="pagebackground">
             <div className="login-background">
-                <h1 className="mt-3">Ublis Finance</h1>
+                <div style={{ width: "100%", display: "flex", justifyContent: "center", padding: "20px 0px" }}>
+                    <img src={Logo} alt="Logo" style={{ width: "50%" }} />
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div style={{ width: "100%", display: "flex", justifyContent: "center", padding: "10px 0px" }}>
                         <div style={{ width: "80%" }}>
@@ -117,7 +120,7 @@ export default function Login() {
                             }
 
                             <div className="input mt-4" style={{ width: "100%" }}>
-                                <Button style={{ width: "100%", background: "#f95005", border: "none", height: "40px" }} label={loading ? "" : "Submit"} icon={loading ? "pi pi-spin pi-spinner" : ""} />
+                                <Button style={{ width: "100%", background: "#174d58", border: "none", height: "40px" }} label={loading ? "" : "Submit"} icon={loading ? "pi pi-spin pi-spinner" : ""} />
                             </div>
 
 

@@ -144,12 +144,11 @@ const AgentInputsUpdate = ({ custId, id, closeSidebarUpdate }) => {
 
     useEffect(() => {
 
-
         try {
 
             axios.post(import.meta.env.VITE_API_URL + "/adminRoutes/getPerson", {
                 roleId: 2,
-                refCustId: custId
+                refUserId: id
             }, {
                 headers: {
                     Authorization: localStorage.getItem("token"),
@@ -251,7 +250,7 @@ const AgentInputsUpdate = ({ custId, id, closeSidebarUpdate }) => {
 
             <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1.5px solid grey", paddingBottom: "10px" }}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>
-                    <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#f95005" }}>
+                    <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#174d58" }}>
                         {custId}
                     </div>
                     <div>
@@ -260,15 +259,15 @@ const AgentInputsUpdate = ({ custId, id, closeSidebarUpdate }) => {
                                 <>
                                     {
                                         saveloading ? (
-                                            <div style={{ backgroundColor: "#f95005", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }}><i className="pi pi-spin pi-spinner" style={{ fontSize: "1rem" }}></i></div>
+                                            <div style={{ backgroundColor: "#174d58", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }}><i className="pi pi-spin pi-spinner" style={{ fontSize: "1rem" }}></i></div>
                                         ) : (
-                                            <div style={{ backgroundColor: "#f95005", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={submitUpdate}>Save</div>
+                                            <div style={{ backgroundColor: "#174d58", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={submitUpdate}>Save</div>
                                         )
                                     }
                                 </>
                             ) : (
                                 <>
-                                    <div style={{ backgroundColor: "#f95005", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={() => { setEdit(false) }} >Edit</div>
+                                    <div style={{ backgroundColor: "#174d58", width: "4rem", textAlign: "center", padding: "10px 0px", borderRadius: "5px", cursor: "pointer", color: "#fff", fontSize: "1rem", fontWeight: "700" }} onClick={() => { setEdit(false) }} >Edit</div>
                                 </>
                             )
                         }
@@ -279,171 +278,361 @@ const AgentInputsUpdate = ({ custId, id, closeSidebarUpdate }) => {
 
             {
                 loading ? (
-                    <><div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#f95005", height: "76vh", width: "100%" }}>
+                    <><div style={{ display: "flex", justifyContent: "center", alignItems: "center", color: "#174d58", height: "76vh", width: "100%" }}>
                         <i className="pi pi-spin pi-spinner" style={{ fontSize: "5rem" }}></i>
                     </div></>
                 ) : (
-                    <div style={{ margin: "5px 0px", height: "76vh", overflow: "auto", padding: "10px" }}>
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            {
-                                !edit ? (
-                                    <div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                        <label>Profile Image</label>
-                                        <div className='mt-2'>
-                                            <label htmlFor="profile-upload" className="custom-file-upload">
-                                                {inputs.updateprofileImg ? inputs.updateprofileImg.name : "Choose Image"}
-                                            </label>
-                                            <input type="file" accept="image/png, image/jpeg, image/jpg" id="profile-upload" onChange={(e) => handleFile(e, "updateprofileImg")} />
-                                        </div>
+                    <div style={{ margin: '5px 0px', height: '75vh', overflow: 'auto', padding: '10px' }}>
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            {!edit ? (
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}
+                                >
+                                    <label>Profile Image</label>
+                                    <div className="mt-2">
+                                        <label htmlFor="profile-upload" className="custom-file-upload">
+                                            {inputs.updateprofileImg ? inputs.updateprofileImg.name : 'Choose Image'}
+                                        </label>
+                                        <input
+                                            type="file"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            id="profile-upload"
+                                            onChange={(e) => handleFile(e, 'updateprofileImg')}
+                                        />
                                     </div>
-                                ) : (<div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                    <img
-                                        src={`data:image/jpeg;base64,${inputs.ProfileImgBase64}`}
-                                        alt="Aadhar"
-                                        style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: "100%" }}
-                                    />
-                                </div>)
-                            }
+                                </div>
+                            ) : (
+                                <>
+
+                                    {
+                                        inputs.ProfileImgBase64 ? (
+                                            <div
+                                                style={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                <img
+                                                    src={`data:image/jpeg;base64,${inputs.ProfileImgBase64}`}
+                                                    alt="Aadhar"
+                                                    style={{
+                                                        width: '200px',
+                                                        height: '200px',
+                                                        objectFit: 'cover',
+                                                        borderRadius: '100%'
+                                                    }}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <label>Profile Image</label>
+                                                <h4>No Image Upload</h4>
+                                            </>
+                                        )
+                                    }
+                                </>
+                            )}
                         </div>
 
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="fname" name="fname" value={inputs.fname} onChange={(e: any) => { handleInput(e) }} disabled={edit} />
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="fname"
+                                    name="fname"
+                                    value={inputs.fname}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                    disabled={edit}
+                                />
                                 <label htmlFor="fname">Enter First Name</label>
                             </FloatLabel>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="lname" name="lname" value={inputs.lname} onChange={(e: any) => { handleInput(e) }} disabled={edit} />
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="lname"
+                                    name="lname"
+                                    value={inputs.lname}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                    disabled={edit}
+                                />
                                 <label htmlFor="lname">Enter Last Name</label>
                             </FloatLabel>
                         </div>
 
-
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <Calendar dateFormat="dd/mm/yy" name="dob" style={{ width: "100%" }} value={new Date(inputs.dob)} id="dob" onChange={(e: any) => { handleInput(e) }} disabled={edit} />
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <FloatLabel style={{ width: '100%' }}>
+                                <Calendar
+                                    dateFormat="dd/mm/yy"
+                                    name="dob"
+                                    style={{ width: '100%' }}
+                                    value={new Date(inputs.dob)}
+                                    id="dob"
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                    disabled={edit}
+                                />
                                 <label htmlFor="dob">Enter Date of Birth</label>
                             </FloatLabel>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <Dropdown name="status" style={{ width: "100%", minWidth: "100%" }} value={inputs.status} options={status} optionLabel="name" optionValue="code" onChange={(e: any) => { handleInput(e) }} disabled={edit} />
+                            <FloatLabel style={{ width: '100%' }}>
+                                <Dropdown
+                                    name="status"
+                                    style={{ width: '100%', minWidth: '100%' }}
+                                    value={inputs.status}
+                                    options={status}
+                                    optionLabel="name"
+                                    optionValue="code"
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                    disabled={edit}
+                                />
                                 <label htmlFor="lname">Active Status</label>
                             </FloatLabel>
                         </div>
 
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="mobileno" name="mobileno" disabled={edit} value={inputs.mobileno} onChange={(e: any) => { handleInput(e) }} />
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="mobileno"
+                                    name="mobileno"
+                                    disabled={edit}
+                                    value={inputs.mobileno}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                />
                                 <label htmlFor="mobileno">Mobile Number</label>
                             </FloatLabel>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="email" disabled={edit} name="email" onChange={(e: any) => { handleInput(e) }} value={inputs.email} />
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="email"
+                                    disabled={edit}
+                                    name="email"
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                    value={inputs.email}
+                                />
                                 <label htmlFor="email">E-Mail</label>
                             </FloatLabel>
                         </div>
 
-
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="aadharno" name="aadharno" disabled={edit} onChange={(e: any) => { handleInput(e) }} value={inputs.aadharno} />
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="aadharno"
+                                    name="aadharno"
+                                    disabled={edit}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                    value={inputs.aadharno}
+                                />
                                 <label htmlFor="aadharno">Aadhar Number</label>
                             </FloatLabel>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="panno" name="panno" disabled={edit} value={inputs.panno} onChange={(e: any) => { handleInput(e) }} />
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="panno"
+                                    name="panno"
+                                    disabled={edit}
+                                    value={inputs.panno}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                />
                                 <label htmlFor="panno">Pan Number</label>
                             </FloatLabel>
                         </div>
 
-
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <div style={{ width: "100%" }}>
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <div style={{ width: '100%' }}>
                                 <label>Aadhar Image</label>
-                                {
-                                    !edit ? (
-                                        <div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                            <div className='mt-2'>
-                                                <label htmlFor="aadhar-upload" className="custom-file-upload">
-                                                    {inputs.updatedaadharImg ? inputs.updatedaadharImg.name : "Choose Image"}
-                                                </label>
-                                                <input type="file" accept="image/png, image/jpeg, image/jpg" id="aadhar-upload" onChange={(e) => handleFile(e, "updatedaadharImg")} />
-                                            </div>
+                                {!edit ? (
+                                    <div
+                                        style={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <div className="mt-2">
+                                            <label htmlFor="aadhar-upload" className="custom-file-upload">
+                                                {inputs.updatedaadharImg ? inputs.updatedaadharImg.name : 'Choose Image'}
+                                            </label>
+                                            <input
+                                                type="file"
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                id="aadhar-upload"
+                                                onChange={(e) => handleFile(e, 'updatedaadharImg')}
+                                            />
                                         </div>
-                                    ) : (<div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                        <img
-                                            src={`data:image/jpeg;base64,${inputs.AadharImgBase64}`}
-                                            alt="Aadhar"
-                                            style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: "10px" }}
-                                        />
-                                    </div>)
-                                }
+                                    </div>
+                                ) : (
+                                    <>
+                                        {
+                                            inputs.updatedaadharImg ? (
+                                                <div
+                                                    style={{
+                                                        width: '100%',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={`data:image/jpeg;base64,${inputs.AadharImgBase64}`}
+                                                        alt="Aadhar"
+                                                        style={{
+                                                            width: '200px',
+                                                            height: '200px',
+                                                            objectFit: 'cover',
+                                                            borderRadius: '10px'
+                                                        }}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <h4>No Image Upload</h4>
+                                                </>
+                                            )
+                                        }
+                                    </>
+                                )}
                             </div>
-                            <div style={{ width: "100%" }}>
+                            <div style={{ width: '100%' }}>
                                 <label>Pan Image</label>
-                                {
-                                    !edit ? (
-                                        <div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                            <div className='mt-2'>
-                                                <label htmlFor="pan-upload" className="custom-file-upload">
-                                                    {inputs.updatepanImg ? inputs.updatepanImg.name : "Choose Image"}
-                                                </label>
-                                                <input type="file" accept="image/png, image/jpeg, image/jpg" id="pan-upload" onChange={(e) => handleFile(e, "updatepanImg")} />
-                                            </div>
+                                {!edit ? (
+                                    <div
+                                        style={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <div className="mt-2">
+                                            <label htmlFor="pan-upload" className="custom-file-upload">
+                                                {inputs.updatepanImg ? inputs.updatepanImg.name : 'Choose Image'}
+                                            </label>
+                                            <input
+                                                type="file"
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                id="pan-upload"
+                                                onChange={(e) => handleFile(e, 'updatepanImg')}
+                                            />
                                         </div>
-                                    ) : (<div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                                        <img
-                                            src={`data:image/jpeg;base64,${inputs.PanImgBase64}`}
-                                            alt="Aadhar"
-                                            style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: "10px" }}
-                                        />
-                                    </div>)
-                                }
+                                    </div>
+                                ) : (
+                                    <>
+                                        {
+                                            inputs.updatepanImg ? (
+                                                <div
+                                                    style={{
+                                                        width: '100%',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={`data:image/jpeg;base64,${inputs.PanImgBase64}`}
+                                                        alt="Aadhar"
+                                                        style={{
+                                                            width: '200px',
+                                                            height: '200px',
+                                                            objectFit: 'cover',
+                                                            borderRadius: '10px'
+                                                        }}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <h4>No Image Upload</h4>
+                                                </>
+                                            )
+                                        }
+                                    </>
+                                )}
                             </div>
                         </div>
 
-
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText id="address" name="address" disabled={edit} value={inputs.address} onChange={(e: any) => { handleInput(e) }} />
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    id="address"
+                                    name="address"
+                                    disabled={edit}
+                                    value={inputs.address}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                />
                                 <label htmlFor="address">Address</label>
                             </FloatLabel>
-                            <FloatLabel style={{ width: "100%" }}>
+                            <FloatLabel style={{ width: '100%' }}>
                                 <Dropdown
                                     name="state"
-                                    style={{ width: "100%", minWidth: "100%", padding: "0" }}
+                                    style={{ width: '100%', minWidth: '100%', padding: '0' }}
                                     value={inputs.state}
                                     filter
                                     options={states}
                                     disabled={edit}
-                                    optionLabel="name" // Specifies the display text
-                                    optionValue="isoCode" // Specifies the actual value
+                                    optionLabel="name"
+                                    optionValue="isoCode"
                                     onChange={(e) => handleInput(e)}
                                 />
                                 <label>Select State</label>
                             </FloatLabel>
-
                         </div>
 
-
-                        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-                            <FloatLabel style={{ width: "100%" }}>
+                        <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                            <FloatLabel style={{ width: '100%' }}>
                                 <Dropdown
                                     className="dropDown"
                                     name="district"
-                                    style={{ width: "100%", minWidth: "100%" }}
+                                    style={{ width: '100%', minWidth: '100%' }}
                                     value={inputs.district}
                                     filter
                                     options={districts}
                                     disabled={edit}
-                                    optionLabel="name" // Ensures dropdown displays district names
-                                    optionValue="name" // Stores district name as the selected value
+                                    optionLabel="name"
+                                    optionValue="name"
                                     onChange={(e) => handleInput(e)}
                                 />
                                 <label>Select District</label>
                             </FloatLabel>
-                            <FloatLabel style={{ width: "100%" }}>
-                                <InputText type="number" name="pincode" style={{ width: "100%" }} id="panno" value={inputs.pincode} disabled={edit} onChange={(e: any) => { handleInput(e) }} />
+                            <FloatLabel style={{ width: '100%' }}>
+                                <InputText
+                                    type="number"
+                                    name="pincode"
+                                    style={{ width: '100%' }}
+                                    id="panno"
+                                    value={inputs.pincode}
+                                    disabled={edit}
+                                    onChange={(e: any) => {
+                                        handleInput(e)
+                                    }}
+                                />
                                 <label htmlFor="panno">Enter Pincode</label>
                             </FloatLabel>
                         </div>
-
                     </div>
                 )
             }

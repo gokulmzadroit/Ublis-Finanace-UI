@@ -32,64 +32,62 @@ const AddnewFund = ({ closeSidebarNew }) => {
   }
 
 
-  
   const Addnewback = async () => {
 
     setSubmitLoading(true);
 
     try {
 
-        axios.post(import.meta.env.VITE_API_URL + "/adminRoutes/addBankFund", {
-            refBankId: inputs.refBankId,
-            refbfTransactionDate: inputs.refbfTransactionDate,
-            refbfTransactionType: inputs.refbfTransactionType,
-            refbfTransactionAmount: inputs.refbfTransactionAmount,
-            refTxnId: inputs.refTxnId,
-            refFundType: inputs.refFundType,
+      axios.post(import.meta.env.VITE_API_URL + "/adminRoutes/addBankFund", {
+        refBankId: inputs.refBankId,
+        refbfTransactionDate: inputs.refbfTransactionDate,
+        refbfTransactionType: inputs.refbfTransactionType,
+        refbfTransactionAmount: parseInt(inputs.refbfTransactionAmount),
+        refTxnId: null,
+        refFundType: inputs.refFundType,
+      },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        }).then((response: any) => {
 
-        },
-            {
-                headers: {
-                    Authorization: localStorage.getItem("token"),
-                    "Content-Type": "application/json",
-                },
-            }).then((response: any) => {
+          const data = decrypt(
+            response.data[1],
+            response.data[0],
+            import.meta.env.VITE_ENCRYPTION_KEY
+          );
 
-                const data = decrypt(
-                    response.data[1],
-                    response.data[0],
-                    import.meta.env.VITE_ENCRYPTION_KEY
-                );
+          console.log(data)
+          setSubmitLoading(false);
 
-                setSubmitLoading(false);
-                console.log('setSubmitLoading', setSubmitLoading)
+          if (data.success) {
 
 
-                if (data.success) {
+            toast.success('Successfully Added', {
+              position: "top-right",
+              autoClose: 2999,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Slide,
+            });
 
-                    toast.success('Successfully Added', {
-                        position: "top-right",
-                        autoClose: 2999,
-                        hideProgressBar: false,
-                        closeOnClick: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                        transition: Slide,
-                    });
+            closeSidebarNew()
 
-                    closeSidebarNew()
+          }
 
-                }
-
-            })
+        })
 
     } catch (e: any) {
-        console.log(e);
+      console.log(e);
     }
 
-}
+  }
 
 
   useEffect(() => {
@@ -138,8 +136,8 @@ const AddnewFund = ({ closeSidebarNew }) => {
       ...prevState,
       refbfTransactionDate: today
     }));
-  }, []); 
-  
+  }, []);
+
 
   return (
     <>
@@ -161,53 +159,53 @@ const AddnewFund = ({ closeSidebarNew }) => {
         }}
       >
         <div style={{ margin: '5px 0px', height: '78vh', overflow: 'auto', padding: '10px' }}>
-        <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
-         
-          <FloatLabel style={{ width: '100%' }}>
-            <Dropdown
-              name="refBankId"
-              style={{ width: '100%', minWidth: '100%' }}
-              value={inputs.refBankId}
-              options={bankOptions}
-              optionLabel="bankname"
-              optionValue="id"
-              onChange={(e: any) => handleInput(e)}
-              required
-            />
-            <label htmlFor="refBankId">Choose Bank ID</label>
-          </FloatLabel>
+          <div style={{ width: "100%", display: "flex", gap: "20px", marginTop: "35px" }}>
 
-        
-          <FloatLabel style={{ width: '100%', marginTop: '' }}>
-            <InputText
-              id="refbfTransactionAmount"
-              name="refbfTransactionAmount"
-              value={inputs.refbfTransactionAmount}
-              onChange={(e: any) => handleInput(e)}
-              required
-            />
-            <label htmlFor="refbfTransactionAmount">Transaction Amount</label>
-          </FloatLabel>
+            <FloatLabel style={{ width: '100%' }}>
+              <Dropdown
+                name="refBankId"
+                style={{ width: '100%', minWidth: '100%' }}
+                value={inputs.refBankId}
+                options={bankOptions}
+                optionLabel="bankname"
+                optionValue="id"
+                onChange={(e: any) => handleInput(e)}
+                required
+              />
+              <label htmlFor="refBankId">Choose Bank ID</label>
+            </FloatLabel>
+
+
+            <FloatLabel style={{ width: '100%', marginTop: '' }}>
+              <InputText
+                id="refbfTransactionAmount"
+                name="refbfTransactionAmount"
+                value={inputs.refbfTransactionAmount}
+                onChange={(e: any) => handleInput(e)}
+                required
+              />
+              <label htmlFor="refbfTransactionAmount">Transaction Amount</label>
+            </FloatLabel>
           </div>
 
-         
+
           <input type="hidden" name="refbfTransactionDate" value={inputs.refbfTransactionDate} />
           <input type="hidden" name="refbfTransactionType" value={inputs.refbfTransactionType} />
           <input type="hidden" name="refTxnId" value={inputs.refTxnId} />
           <input type="hidden" name="refFundType" value={inputs.refFundType} />
 
-          
+
           {
-                        submitLoading ? (
-                            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "35px" }}>
-                                <i className="pi pi-spin pi-spinner" style={{ fontSize: "2rem", color: "#f95005" }}></i>
-                            </div>
-                        ) : (
-                            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "35px" }}>
-                                <Button style={{ width: "20%" }} type='submit' severity='success' label="Submit" />
-                            </div>
-                        )
-                    }
+            submitLoading ? (
+              <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "35px" }}>
+                <i className="pi pi-spin pi-spinner" style={{ fontSize: "2rem", color: "#f95005" }}></i>
+              </div>
+            ) : (
+              <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "35px" }}>
+                <Button style={{ width: "20%" }} type='submit' severity='success' label="Submit" />
+              </div>
+            )
+          }
         </div>
 
       </form>

@@ -1,394 +1,294 @@
-import Header from '@renderer/components/Header/Header'
-import decrypt from '@renderer/components/Helper/Helper'
-import axios from 'axios'
-import { Column } from 'primereact/column'
-import { DataTable } from 'primereact/datatable'
-import { InputText } from 'primereact/inputtext'
-import { Sidebar } from 'primereact/sidebar'
-import { useEffect, useState } from 'react'
-import { Slide, toast, ToastContainer } from 'react-toastify'
-import { IconField } from 'primereact/iconfield'
-import { InputIcon } from 'primereact/inputicon'
-import { FilterMatchMode } from 'primereact/api'
-import { Button } from 'primereact/button'
-import { TabPanel, TabView } from 'primereact/tabview'
-import { FloatLabel } from 'primereact/floatlabel'
-import { Dropdown } from 'primereact/dropdown'
-import { Calendar } from 'primereact/calendar'
+import axios from "axios";
+import { TabPanel, TabView } from "primereact/tabview";
+import { useEffect, useState } from "react"
+import decrypt from "../Helper/Helper";
+import { Button } from "primereact/button";
+import { FloatLabel } from "primereact/floatlabel";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
+import { InputNumber } from "primereact/inputnumber";
+import { Slide, toast, ToastContainer } from "react-toastify";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 
-// import React from 'react';
+const Addnewloan = ({ custId, id, closeSidebarUpdate }) => {
 
-const Addnewloan = ({ custId, id, userDetailsLoanData, closeSidebarUpdate }) => {
-  console.log('id', id)
-  console.log('userDetailsLoanData', userDetailsLoanData.refUserId)
-  const [userLists, setUserLists] = useState([])
-  const refLoanStatus = [
-    { name: 'Active', code: 'active' },
-    { name: 'Inactive', code: 'inactive' }
-  ]
-  const [bankOptions, setBankOptions] = useState([])
-  const [submitLoading, setSubmitLoading] = useState(false)
-  const [showForm, setShowForm] = useState(false)
+  const [loading, setLoading] = useState(true);
+  const [newLoading, setNewLoading] = useState(false);
 
-  const [inputs, setInputs]: any = useState({
-    refBankName: '',
-    refBankAccountNo: '',
-    refBankAddress: '',
-    refBalance: 0,
-    refProductId: '',
-    refLoanAmount: '',
-    refLoanDueDate: '',
-    refPayementType: '',
-    refRepaymentStartDate: '',
-    refLoanStatus: '',
-    refLoanStartDate: '',
-    refBankId: '',
-    refLoanBalance: '',
-    isInterestFirst: '',
-    userId: '',
-    refProductName:''
-  })
+  const [allBankAccountList, setAllBankAccountList] = useState([]);
+  const [productList, setProductList]: any = useState([]);
 
-  const [username, setUsername] = useState('')
+  const [loanData, setLoadData] = useState([]);
 
-  const [loadingStatus, setLoadingStatus] = useState(true)
 
-  const [userData, setUserData] = useState({
-    refProductId: '',
-    refProductName: '',
-    refProductDuration: '',
-    refProductInterest: '',
-    refProductDescription: '',
-    refProductStatus: ''
-  })
+  const [addInputs, setAddInputs] = useState({
+    productId: "",
+    productInterest: "",
+    productDuration: "",
+    refLoanAmount: null,
+    refrepaymentStartDate: null,
+    refPaymentType: "",
+    refLoanStatus: "opened",
+    refBankId: "",
+    refisInterest: false,
+    refLoanBalance: 0,
+  });
 
-  const Addnewloan = async () => {
-    setSubmitLoading(true)
 
-    try {
-      axios
-        .post(
-          import.meta.env.VITE_API_URL + '/adminRoutes/addLoan',
-          {
-            refProductId: userData.refProductId,
-            refLoanAmount: inputs.refLoanAmount,
-            refLoanDueDate: inputs.refLoanDueDate,
-            refPayementType: inputs.refPayementType,
-            refRepaymentStartDate: inputs.refRepaymentStartDate,
-            refLoanStatus: inputs.refLoanStatus,
-            refLoanStartDate: inputs.refLoanStartDate,
-            refBankId: inputs.refBankId,
-            refLoanBalance: inputs.refLoanBalance,
-            isInterestFirst: inputs.isInterestFirst,
-            userId: userDetailsLoanData.refUserId
-          },
-          {
-            headers: {
-              Authorization: localStorage.getItem('token'),
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-        .then((response: any) => {
-          const data = decrypt(
-            response.data[1],
-            response.data[0],
-            import.meta.env.VITE_ENCRYPTION_KEY
-          )
+  const paymentType = [{
+    label: "Bank",
+    id: 'bank'
+  }, {
+    label: "Cash",
+    id: "cash"
+  }];
 
-          setSubmitLoading(false)
-          console.log('setSubmitLoading', setSubmitLoading)
 
-          if (data.success) {
-            toast.success('Successfully Added', {
-              position: 'top-right',
-              autoClose: 2999,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-              transition: Slide
-            })
+  const getLoanData = () => {
 
-            closeSidebarUpdate()
-          }
-        })
-    } catch (e: any) {
-      console.log(e)
-    }
+    axios.post(
+      import.meta.env.VITE_API_URL + '/adminRoutes/getLoan',
+      {
+        userId: id
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          'Content-Type': 'application/json'
+        }
+      }
+    ).then((response) => {
+      const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY);
+
+
+      if (data.success) {
+        console.log(data)
+        setLoading(false)
+
+        setLoadData(data.loanData);
+
+        setAllBankAccountList(data.allBankAccountList);
+        setProductList(data.productList);
+      }
+
+    })
+
   }
 
-  const loadData = () => {
-    try {
-      axios
-        .get(import.meta.env.VITE_API_URL + '/adminRoutes/getLoanList', {
-          headers: {
-            Authorization: localStorage.getItem('token'),
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((response: any) => {
-          const data = decrypt(
-            response.data[1],
-            response.data[0],
-            import.meta.env.VITE_ENCRYPTION_KEY
-          );
-  
-        
-  
-          if (data.success) {
-            console.log('Fetched Loan Data:----------->', data);
-           
-            setLoadingStatus(false);
-          }
-        });
-    } catch (e: any) {
-      console.log(e);
-    }
-  };
-  
   useEffect(() => {
-    loadData()
 
-    setInputs((prevState) => ({
-      ...prevState,
-      custId: custId
-    }))
-  }, [custId])
+    getLoanData();
 
-  const CustomerId = (rowData: any) => {
-    return (
-      <>
-        <div
-          onClick={() => {
-            setUpdateData(true)
-            setUserData({
-              refProductId: rowData.refProductId,
-              refProductName: rowData.refProductName,
-              refProductDuration: rowData.refProductDuration,
-              refProductInterest: rowData.refProductInterest,
-              refProductDescription: rowData.refProductDescription,
-              refProductStatus: rowData.refProductStatus
-            })
-          }}
-          style={{ color: '#f95005', textDecoration: 'underline', cursor: 'pointer' }}
-        >
-          {rowData.refProductName}
-        </div>
-      </>
-    )
-  }
+  }, []);
 
-  const InterestPercentage = (rowData: any) => {
-    return (
-      <>
-        <div>{rowData.refProductInterest} %</div>
-      </>
-    )
-  }
-
-  const ProductDuration = (rowData: any) => {
-    return (
-      <>
-        <div>{rowData.refProductDuration} Months</div>
-      </>
-    )
-  }
-
-  const [newData, setNewData] = useState(false)
-
-  const [updateData, setUpdateData] = useState(false)
-
-  // const closeSidebarUpdate = () => {
-  //     setUpdateData(false);
-  //     loadData();
-  // }
-
-  // const closeSidebarNew = () => {
-  //     setNewData(false);
-  //     loadData();
-  // }
-
-  //   Filter Data - Start
-
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-  })
-  const [globalFilterValue, setGlobalFilterValue] = useState('')
-
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value
-    let _filters = { ...filters }
-
-    _filters['global'].value = value
-
-    setFilters(_filters)
-    setGlobalFilterValue(value)
-  }
-
-  const StatusBody = (rowData: any) => {
-    return (
-      <>
-        {rowData.refProductStatus === 'active' ? (
-          <div
-            style={{
-              padding: '5px',
-              backgroundColor: '#00b600',
-              color: '#fff',
-              borderRadius: '10px',
-              fontSize: '0.8rem',
-              textAlign: 'center'
-            }}
-          >
-            Active
-          </div>
-        ) : (
-          <div
-            style={{
-              padding: '5px',
-              backgroundColor: '#f95f5f',
-              color: '#fff',
-              borderRadius: '10px',
-              fontSize: '0.8rem',
-              textAlign: 'center'
-            }}
-          >
-            Inactive
-          </div>
-        )}
-      </>
-    )
-  }
-  const handleNewUser = async () => {
-    setSubmitLoading(true)
-
-    try {
-      axios
-        .post(
-          import.meta.env.VITE_API_URL + '/adminRoutes/addBankAccount',
-          {
-            refBankName: inputs.refBankName,
-            refBankAccountNo: inputs.refBankAccountNo,
-            refBankAddress: inputs.refBankAddress,
-            refBalance: inputs.refBalance
-          },
-          {
-            headers: {
-              Authorization: localStorage.getItem('token'),
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-        .then((response: any) => {
-          const data = decrypt(
-            response.data[1],
-            response.data[0],
-            import.meta.env.VITE_ENCRYPTION_KEY
-          )
-          console.log('data----------->295', data)
-
-          setSubmitLoading(false)
-
-          if (data.success) {
-            toast.success('Successfully Added', {
-              position: 'top-right',
-              autoClose: 2999,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-              transition: Slide
-            })
-
-            closeSidebarUpdate()
-          }
-        })
-    } catch (e: any) {
-      console.log(e)
-    }
-  }
 
   const handleInput = (e: any) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
-    setInputs((prevState) => ({
-      ...prevState,
-      [name]: value
-    }))
-  }
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0]
-    setInputs((prevState) => ({
-      ...prevState,
-      refbfTransactionDate: today
-    }))
+    setError({
+      status: false,
+      message: ""
+    })
 
-    const fetchBankDetails = async () => {
-      try {
-        const response = await axios.get(
-          import.meta.env.VITE_API_URL + '/adminRoutes/getBankList',
-          {
-            headers: {
-              Authorization: localStorage.getItem('token'),
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-
-        const data = decrypt(
-          response.data[1],
-          response.data[0],
-          import.meta.env.VITE_ENCRYPTION_KEY
-        )
-
-        if (data.success) {
-          const bankData = data.BankFund.map((item: any) => ({
-            bankname: item.refBankName,
-            id: item.refBankId
-          }))
-          setBankOptions(bankData)
-        }
-      } catch (error) {
-        console.log('Error fetching bank details:', error)
-      }
+    if (name === "productId") {
+      setAddInputs({
+        ...addInputs,
+        [name]: value,
+        ["productInterest"]: productList.find((product: any) => product.refProductId === value)?.refProductInterest,
+        ["productDuration"]: productList.find((product: any) => product.refProductId === value)?.refProductDuration,
+        ["refLoanAmount"]: null,
+        ["refisInterest"]: false,
+        ["refLoanBalance"]: 0,
+      })
+    } else {
+      setAddInputs({
+        ...addInputs,
+        [name]: value
+      })
     }
 
-    fetchBankDetails()
-  }, [])
+  }
+
+  const submitAddLoan = () => {
+    setNewLoading(true);
+
+    axios.post(
+      import.meta.env.VITE_API_URL + '/adminRoutes/addLoan',
+      {
+        refProductId: addInputs.productId,
+        refLoanAmount: addInputs.refLoanAmount,
+        refPayementType: addInputs.refPaymentType,
+        refRepaymentStartDate: addInputs.refrepaymentStartDate,
+        refLoanStatus: "opened",
+        refBankId: addInputs.refBankId,
+        refLoanBalance: addInputs.refLoanBalance,
+        isInterestFirst: addInputs.refisInterest,
+        interest: (parseFloat(addInputs.productInterest) / 100) * (addInputs.refLoanAmount ? addInputs.refLoanAmount : 0),
+        userId: id,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          'Content-Type': 'application/json'
+        }
+      }
+    ).then((response) => {
+      const data = decrypt(response.data[1], response.data[0], import.meta.env.VITE_ENCRYPTION_KEY);
+
+
+      if (data.success) {
+        console.log(data)
+
+        setNewLoading(false);
+
+        toast.success('Successfully Loan Added', {
+          position: 'top-right',
+          autoClose: 2999,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Slide
+        });
+
+        setAddInputs({
+          productId: "",
+          productInterest: "",
+          productDuration: "",
+          refLoanAmount: null,
+          refrepaymentStartDate: null,
+          refPaymentType: "",
+          refLoanStatus: "opened",
+          refBankId: "",
+          refisInterest: false,
+          refLoanBalance: 0,
+        })
+
+        setActiveIndex(0);
+
+        getLoanData();
+
+      } else {
+
+
+        console.log(data)
+
+        setNewLoading(false);
+        setError({
+          status: true,
+          message: data.error
+        })
+
+      }
+
+    })
+  }
+
+  const [activeIndex, setActiveIndex] = useState(0); // 0 = Loan History, 1 = Create New Loan
+
+  const [error, setError] = useState({ status: false, message: "" })
+
+
+  const isInterestAmount = (rowData: any) => {
+    return (
+      <>
+        {
+          rowData.isInterestFirst ? "Yes" : "No"
+        }
+      </>
+    )
+
+  }
+
+
+  const [filter, setFilter] = useState("opened");
+
+  const filterOption = [
+    { label: "Loan Opened", value: "opened" },
+    { label: "Loan Closed", value: "closed" }
+  ]
+
+  const filteredLoanData = loanData.filter((loan: any) => loan.refLoanStatus === filter);
 
   return (
-    <div className="card">
-      <TabView>
-        <TabPanel header="History">
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Button
-              style={{ width: '20%' }}
-              label="Add New Loan"
-              raised
-              onClick={() => setShowForm(true)}
-            />
+    <>
+      <ToastContainer />
+      <div style={{ fontSize: '1.2rem', fontWeight: '700', color: '#000' }}>{custId}</div>
+      {loading ? (
+        <>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: '#174d58',
+              height: '76vh',
+              width: '100%'
+            }}
+          >
+            <i className="pi pi-spin pi-spinner" style={{ fontSize: '5rem' }}></i>
+          </div>
+        </>
+      ) : (
+        <>
+          <TabView
+            activeIndex={activeIndex}
+            onTabChange={(e) => { console.log(e.index); setActiveIndex(e.index) }}
+            style={{ marginTop: "1rem" }}>
+            <TabPanel header="Loan History">
 
-            {showForm && (
+              <div style={{ padding: "20px 0px" }}>
+                <Dropdown
+                  id="statusChoose"
+                  // style={{ width: '100%', minWidth: '100%', padding: '0' }}
+                  value={filter}
+                  options={filterOption}
+                  optionLabel="label"
+                  optionValue="value"
+                  onChange={(e) => { setFilter(e.value) }}
+                  required
+                />
+              </div>
+
+              <DataTable
+                paginator
+                rows={5}
+                value={filteredLoanData} // Use the filtered data here
+                showGridlines
+                scrollable
+                emptyMessage={<div style={{ textAlign: 'center' }}>No Records Found</div>}
+                tableStyle={{ minWidth: '50rem', overflow: 'auto' }}
+              >
+                <Column style={{ minWidth: '8rem' }} field="refLoanStartDate" header="Loan Start Date"></Column>
+                <Column style={{ minWidth: '8rem' }} field="refLoanDueDate" header="Loan Closed Date"></Column>
+                <Column style={{ minWidth: '8rem' }} field="principal" header="Principal Amount"></Column>
+                <Column style={{ minWidth: '8rem' }} field="interestAmount" header="Interest Amount"></Column>
+                <Column style={{ minWidth: '8rem' }} field="refPayableAmount" header="Total Payable Amount"></Column>
+                <Column style={{ minWidth: '8rem' }} body={isInterestAmount} header="Interest First"></Column>
+              </DataTable>
+
+            </TabPanel>
+            <TabPanel header="Create New Loan">
               <form
                 onSubmit={(e) => {
                   e.preventDefault()
-                  Addnewloan()
+                  submitAddLoan()
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
                   <FloatLabel style={{ width: '100%' }}>
                     <Dropdown
-                      name="refProductId"
+                      name="productId"
                       style={{ width: '100%', minWidth: '100%', padding: '0' }}
-                      value={userData.refProductId}
-                      options={userLists}
+                      value={addInputs.productId}
+                      options={productList}
                       optionLabel="refProductName"
                       optionValue="refProductId"
-                      onChange={(e) => setUserData({ ...userData, refProductId: e.value })}
+                      onChange={(e) => { handleInput(e) }}
                       filter
                       required
                     />
@@ -397,158 +297,162 @@ const Addnewloan = ({ custId, id, userDetailsLoanData, closeSidebarUpdate }) => 
 
                   <FloatLabel style={{ width: '100%' }}>
                     <InputText
-                      type="number"
-                      id="refLoanAmount"
-                      name="refLoanAmount"
-                      value={inputs.refLoanAmount}
-                      onChange={(e: any) => {
-                        handleInput(e)
-                      }}
+                      type="text"
+                      id="interest"
+                      name="interest"
+                      value={addInputs.productInterest}
+                      disabled
                       required
                     />
-                    <label htmlFor="refLoanAmount">Enter Price</label>
+                    <label htmlFor="interest">Interest %</label>
                   </FloatLabel>
                 </div>
                 <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
-                  <FloatLabel style={{ width: '100%' }}>
-                    <Calendar
-                      dateFormat="dd/mm/yy"
-                      name="refLoanDueDate"
-                      style={{ width: '100%' }}
-                      value={inputs.refLoanDueDate ? new Date(inputs.refLoanDueDate) : null}
-                      id="refLoanDueDate"
-                      onChange={(e: any) => {
-                        handleInput(e)
-                      }}
-                      required
-                    />
-                    <label htmlFor="refLoanDueDate">Loan due date</label>
-                  </FloatLabel>
-
                   <FloatLabel style={{ width: '100%' }}>
                     <InputText
                       type="text"
-                      id="refPayementType"
-                      name="refPayementType"
-                      value={inputs.refPayementType}
-                      onChange={(e: any) => {
-                        handleInput(e)
-                      }}
+                      id="duration"
+                      name="duration"
+                      value={addInputs.productDuration}
+                      disabled
                       required
                     />
-                    <label htmlFor="refPayementType">Enter Payment type</label>
+                    <label htmlFor="duration">Duration (Months)</label>
+                  </FloatLabel>
+
+                  <FloatLabel style={{ width: '100%' }}>
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      id="refLoanAmount"
+                      name="refLoanAmount"
+                      useGrouping={true}
+                      value={addInputs.refLoanAmount}
+                      onChange={(e: any) => {
+                        if (addInputs.refisInterest) {
+                          const val = parseFloat(e.value) - (parseFloat(e.value) * (parseFloat(addInputs.productInterest) / 100))
+                          setAddInputs({ ...addInputs, ["refLoanAmount"]: e.value, ["refLoanBalance"]: val })
+                        } else {
+                          setAddInputs({ ...addInputs, ["refLoanAmount"]: e.value, ["refLoanBalance"]: e.value })
+                        }
+                      }}
+                      required />
+                    <label htmlFor="refLoanAmount">Enter Loan Amount</label>
                   </FloatLabel>
                 </div>
                 <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
                   <FloatLabel style={{ width: '100%' }}>
                     <Calendar
                       dateFormat="dd/mm/yy"
-                      name="refRepaymentStartDate"
+                      name="refrepaymentStartDate"
                       style={{ width: '100%' }}
-                      value={
-                        inputs.refRepaymentStartDate ? new Date(inputs.refRepaymentStartDate) : null
-                      }
-                      id="refRepaymentStartDate"
+                      value={addInputs.refrepaymentStartDate}
+                      id="refrepaymentStartDate"
                       onChange={(e: any) => {
                         handleInput(e)
                       }}
                       required
                     />
-                    <label htmlFor="refRepaymentStartDate">Payment start date</label>
+                    <label htmlFor="refrepaymentStartDate">Repayement Start Date</label>
                   </FloatLabel>
 
                   <FloatLabel style={{ width: '100%' }}>
                     <Dropdown
-                      name="refLoanStatus"
-                      style={{ width: '100%', minWidth: '100%' }}
-                      value={inputs.refLoanStatus}
-                      options={refLoanStatus}
-                      optionLabel="name"
-                      optionValue="code"
-                      onChange={(e: any) => {
-                        handleInput(e)
-                      }}
+                      id="refPaymentType"
+                      name="refPaymentType"
+                      style={{ width: '100%', minWidth: '100%', padding: '0' }}
+                      value={addInputs.refPaymentType}
+                      options={paymentType}
+                      optionLabel="label"
+                      optionValue="id"
+                      onChange={(e) => { handleInput(e) }}
                       required
                     />
-                    <label htmlFor="lname">Active Status</label>
+                    <label htmlFor="refPaymentType">Choose Payment type</label>
                   </FloatLabel>
                 </div>
                 <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
-                  <FloatLabel style={{ width: '100%' }}>
-                    <Calendar
-                      dateFormat="dd/mm/yy"
-                      name="refLoanStartDate"
-                      style={{ width: '100%' }}
-                      value={inputs.refLoanStartDate ? new Date(inputs.refLoanStartDate) : null}
-                      id="refLoanStartDate"
-                      onChange={(e: any) => {
-                        handleInput(e)
-                      }}
-                      required
-                    />
-                    <label htmlFor="refLoanStartDate">Loan start date</label>
-                  </FloatLabel>
-
                   <FloatLabel style={{ width: '100%' }}>
                     <Dropdown
                       name="refBankId"
                       style={{ width: '100%', minWidth: '100%' }}
-                      value={inputs.refBankId}
-                      options={bankOptions}
-                      optionLabel="bankname"
-                      optionValue="id"
+                      value={addInputs.refBankId}
+                      options={allBankAccountList}
+                      optionLabel="refBankName"
+                      optionValue="refBankId"
                       onChange={(e: any) => handleInput(e)}
                       required
+                      id="refBankId"
                     />
                     <label htmlFor="refBankId"> Choose Bank</label>
                   </FloatLabel>
-                </div>
-                <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
-                  <FloatLabel style={{ width: '100%' }}>
-                    <InputText
-                      id="refLoanBalance"
-                      name="refLoanBalance"
-                      value={inputs.refLoanBalance}
-                      onChange={(e: any) => {
-                        handleInput(e)
-                      }}
-                      required
-                    />
-                    <label htmlFor="refLoanBalance">Loan Balance</label>
-                  </FloatLabel>
 
-                  <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', width: '100%', alignItems: 'start', flexDirection: "column" }}>
                     <label>Is Interest First:</label>
-                    <div>
-                      <input
-                        type="radio"
-                        id="interestFirstYes"
-                        name="isInterestFirst"
-                        value="true"
-                        checked={inputs.isInterestFirst === 'true'}
-                        onChange={(e) => setInputs({ ...inputs, isInterestFirst: e.target.value })}
-                        required
-                      />
-                      <label htmlFor="interestFirstYes">Yes</label>
-                    </div>
-                    <div>
-                      <input
-                        type="radio"
-                        id="interestFirstNo"
-                        name="isInterestFirst"
-                        value="false"
-                        checked={inputs.isInterestFirst === 'false'}
-                        onChange={(e) => setInputs({ ...inputs, isInterestFirst: e.target.value })}
-                        required
-                      />
-                      <label htmlFor="interestFirstNo">No</label>
+                    <div style={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "center", gap: "20px" }}>
+                      <div>
+                        <input
+                          type="radio"
+                          id="interestFirstYes"
+                          name="isInterestFirst"
+                          checked={addInputs.refisInterest === true}
+                          onChange={() => {
+                            if (addInputs.refLoanAmount && addInputs.productId) {
+                              const val = parseFloat(addInputs.refLoanAmount) - (parseFloat(addInputs.refLoanAmount) * (parseFloat(addInputs.productInterest) / 100))
+                              setAddInputs({ ...addInputs, ["refisInterest"]: true, ["refLoanBalance"]: val })
+                            } else {
+                              setAddInputs({ ...addInputs, ["refisInterest"]: true })
+                            }
+                          }}
+                          required
+                        />
+                        <label htmlFor="interestFirstYes">Yes</label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          id="interestFirstNo"
+                          name="isInterestFirst"
+                          checked={addInputs.refisInterest === false}
+                          onChange={() => {
+                            if (addInputs.refLoanAmount && addInputs.productId) {
+                              const val = parseFloat(addInputs.refLoanAmount)
+                              setAddInputs({ ...addInputs, ["refisInterest"]: false, ["refLoanBalance"]: val })
+                            } else {
+                              setAddInputs({ ...addInputs, ["refisInterest"]: false })
+                            }
+                          }}
+                          required
+                        />
+                        <label htmlFor="interestFirstNo">No</label>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div style={{ width: '100%', display: 'flex', gap: '20px', marginTop: '35px' }}>
+                  <FloatLabel style={{ width: '100%' }}>
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      id="refLoanBalance"
+                      name="refLoanBalance"
+                      useGrouping={true}
+                      value={addInputs.refLoanBalance}
+                      disabled
+                      required />
+                    <label htmlFor="refLoanBalance">Loan Balance</label>
+                  </FloatLabel>
+
+
+                </div>
+
+
+                {
+                  error.status ? (
+                    <div style={{ marginTop: "20px", color: "red" }}>{error.message}</div>
+                  ) : null
+                }
 
                 <div>
-                  {' '}
-                  {submitLoading ? (
+                  {newLoading ? (
                     <div
                       style={{
                         width: '100%',
@@ -557,10 +461,12 @@ const Addnewloan = ({ custId, id, userDetailsLoanData, closeSidebarUpdate }) => 
                         marginTop: '35px'
                       }}
                     >
-                      <i
-                        className="pi pi-spin pi-spinner"
-                        style={{ fontSize: '2rem', color: '#f95005' }}
-                      ></i>
+                      <Button
+                        style={{ width: '20%' }}
+                        type="submit"
+                        severity="success"
+                        icon="pi pi-spin pi-spinner"
+                      />
                     </div>
                   ) : (
                     <div
@@ -581,37 +487,9 @@ const Addnewloan = ({ custId, id, userDetailsLoanData, closeSidebarUpdate }) => 
                   )}{' '}
                 </div>
               </form>
-            )}
-
-            <div style={{marginTop:"35px"}}>
-              {' '}
-              {/* Datatable - Start */}
-              <DataTable value={userLists} paginator rows={10} loading={loadingStatus}>
-  <Column field="columnID" header="Product ID" />
-  <Column field="refLoanAmount" header="Loan Amount" />
-  <Column field="refLoanDueDate" header="Due Date" />
-  <Column field="refRepaymentStartDate" header="Repayment Start" />
-  <Column field="refLoanStatus" header="Status" />
-  <Column field="refLoanStartDate" header="Loan Start Date" />
-  <Column field="refLoanBalance" header="Loan Balance" />
-  <Column field="isInterestFirst" header="Interest First" />
-</DataTable>
-
-              {/* Datatable - End */}
-            </div>
-          </div>
-        </TabPanel>
-        <TabPanel header="Closed">
-          <p className="m-0">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-            architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas
-            sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-            voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-          </p>
-        </TabPanel>
-      </TabView>
-    </div>
+            </TabPanel>
+          </TabView></>)}
+    </>
   )
 }
 

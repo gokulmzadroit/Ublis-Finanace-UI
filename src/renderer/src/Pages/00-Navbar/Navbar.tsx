@@ -9,6 +9,8 @@ import { GiMoneyStack } from "react-icons/gi";
 import { FaPiggyBank } from "react-icons/fa";
 import { GrTransaction } from "react-icons/gr";
 
+import logo from "../../assets/Logo-1.png";
+
 import { NavLink, useLocation } from "react-router-dom";
 
 import "./Navbar.css";
@@ -113,7 +115,7 @@ export default function Navbar({ children }) {
                                             animate="show"
                                             exit="hidden"
                                         >
-                                            Ublis Finance
+                                            <img src={logo} alt="logo" style={{ width: "90%" }} />
                                         </motion.h1>
                                     )}
                                 </AnimatePresence>

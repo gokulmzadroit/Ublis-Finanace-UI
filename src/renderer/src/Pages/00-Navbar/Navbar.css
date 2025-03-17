@@ -1,5 +1,5 @@
 .sidebar {
-  background-color: #f95005;
+  background-color: #174d58;
   color: white;
   height: 100vh;
   top: 0;
@@ -61,7 +61,7 @@
 }
 
 .link:hover {
-  color: #f95005;
+  color: #174d58;
   border-right: 4px solid white;
   transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
   background-color: #fff;
@@ -71,7 +71,7 @@
   color: #fff;
   border-right: 4px solid white;
   transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-  background-color: #f95005;
+  background-color: #174d58;
 }
 
 .link_text {
